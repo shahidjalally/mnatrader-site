@@ -1,27 +1,55 @@
-const menuButton = document.querySelector('.menu-toggle');
-const navigation = document.querySelector('.site-nav');
-const header = document.querySelector('.site-header');
-const dialog = document.querySelector('.content-dialog');
-menuButton.addEventListener('click', () => { const isOpen = menuButton.getAttribute('aria-expanded') === 'true'; menuButton.setAttribute('aria-expanded', String(!isOpen)); menuButton.setAttribute('aria-label', isOpen ? 'Open navigation' : 'Close navigation'); navigation.classList.toggle('open', !isOpen); });
-navigation.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { menuButton.setAttribute('aria-expanded', 'false'); menuButton.setAttribute('aria-label', 'Open navigation'); navigation.classList.remove('open'); }));
-window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 100), { passive: true });
-const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.style.transitionDelay = `${entry.target.dataset.delay || 0}ms`; entry.target.classList.add('visible'); observer.unobserve(entry.target); } }), { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
-const lessonCopy = {
-  'Market Foundations': 'Learn how swing highs, swing lows, momentum, and key price zones work together. This module gives you a clean framework for reading any chart before you think about entering a trade.',
-  'Strategy Building': 'Turn an idea into rules you can actually follow. Define context, entry, invalidation, target, risk, and a review routine so every trade becomes useful feedback.',
-  'Risk Mastery': 'Build position-sizing and loss-management habits that keep one decision from defining your journey. The goal is not to avoid losses—it is to keep them planned and manageable.',
-  'The one-percent rule': 'Risk is the only variable you fully control. A small fixed risk per idea gives your learning process enough time and data to improve without one bad day doing permanent damage.',
-  'A simpler trading plan': 'More indicators rarely create more clarity. A useful plan identifies market context, one setup, a precise invalidation point, and the conditions that mean you should do nothing.',
-  'Three pre-trade questions': 'Before entering, ask: Is this my setup? Where am I objectively wrong? Is the potential reward worth the risk? If any answer is unclear, waiting is a valid position.',
-  'A focused way to learn': 'Start with market structure, build one repeatable setup, then protect it with strict risk rules. MNA Trader helps you replace scattered information with a deliberate learning routine.'
-};
-function openDialog(title) { dialog.querySelector('.dialog-title').textContent = title; dialog.querySelector('.dialog-copy').textContent = lessonCopy[title]; dialog.showModal(); }
-document.querySelectorAll('[data-course]').forEach((button) => button.addEventListener('click', () => openDialog(button.dataset.course)));
-document.querySelectorAll('[data-article]').forEach((button) => button.addEventListener('click', () => openDialog(button.dataset.article)));
-document.querySelector('.video-trigger').addEventListener('click', () => openDialog('A focused way to learn'));
-document.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
-dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
-dialog.querySelector('a').addEventListener('click', () => dialog.close());
-document.querySelector('.copy-link').addEventListener('click', async () => { const text = window.location.href.split('#')[0]; if (navigator.clipboard) await navigator.clipboard.writeText(text); const toast = document.querySelector('.toast'); toast.classList.add('show'); window.setTimeout(() => toast.classList.remove('show'), 1800); });
+const reelTrack = document.querySelector('.reel-track');
+const originalReels = [...reelTrack.children];
+originalReels.forEach((reel) => reelTrack.append(reel.cloneNode(true)));
+
+const videos = [...document.querySelectorAll('.reel video')];
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) entry.target.play().catch(() => {});
+    else entry.target.pause();
+  });
+}, { threshold: 0.45 });
+videos.forEach((video) => videoObserver.observe(video));
+
+document.querySelectorAll('.sound-toggle').forEach((button) => {
+  button.addEventListener('click', () => {
+    const video = button.previousElementSibling;
+    videos.forEach((item) => { if (item !== video) item.muted = true; });
+    document.querySelectorAll('.sound-toggle').forEach((item) => { if (item !== button) { item.textContent = 'Sound off'; item.setAttribute('aria-label', 'Unmute video'); } });
+    video.muted = !video.muted;
+    button.textContent = video.muted ? 'Sound off' : 'Sound on';
+    button.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
+  });
+});
+
+const reviewTimes = ['6.57.03','6.57.04','6.57.06','6.57.07','6.57.08','6.57.09','6.57.10','6.57.11','6.57.13','6.57.14','6.57.15','6.57.16','6.57.17','6.57.18','6.57.19','6.57.21','6.57.22','6.57.24','6.57.25','6.57.26','6.57.27','6.57.28','6.57.30','6.57.31','6.57.32','6.57.33','6.57.34','6.57.36','6.57.37','6.57.38','6.57.39','6.57.40','6.57.42','6.57.43','6.57.45','6.57.46'];
+const reviewTrack = document.querySelector('.review-track');
+reviewTimes.forEach((time, index) => {
+  const card = document.createElement('article');
+  card.className = 'review-card glass';
+  const image = document.createElement('img');
+  image.src = `reviews/WhatsApp Image 2026-08-20 at ${time} PM.jpeg`;
+  image.alt = `MNA Trader community feedback ${index + 1}`;
+  image.loading = index < 4 ? 'eager' : 'lazy';
+  card.append(image);
+  reviewTrack.append(card);
+});
+
+const viewport = document.querySelector('.review-viewport');
+let carouselPlaying = true;
+const scrollReviews = (direction = 1) => viewport.scrollBy({ left: direction * 275, behavior: 'smooth' });
+document.querySelector('.prev').addEventListener('click', () => scrollReviews(-1));
+document.querySelector('.next').addEventListener('click', () => scrollReviews(1));
+document.querySelector('.pause').addEventListener('click', (event) => {
+  carouselPlaying = !carouselPlaying;
+  event.currentTarget.textContent = carouselPlaying ? 'Ⅱ' : '▶';
+  event.currentTarget.setAttribute('aria-label', carouselPlaying ? 'Pause review carousel' : 'Play review carousel');
+});
+setInterval(() => {
+  if (!carouselPlaying || document.hidden) return;
+  const end = viewport.scrollWidth - viewport.clientWidth - 10;
+  if (viewport.scrollLeft >= end) viewport.scrollTo({ left: 0, behavior: 'smooth' });
+  else scrollReviews(1);
+}, 2800);
+
 document.querySelector('#year').textContent = new Date().getFullYear();
