@@ -1,22 +1,14 @@
 const videos = [...document.querySelectorAll('.reel video')];
 const videoObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
-    if (entry.isIntersecting) entry.target.play().catch(() => {});
+    if (entry.isIntersecting) {
+      entry.target.muted = false;
+      entry.target.play().catch(() => {});
+    }
     else entry.target.pause();
   });
 }, { threshold: 0.45 });
 videos.forEach((video) => videoObserver.observe(video));
-
-document.querySelectorAll('.sound-toggle').forEach((button) => {
-  button.addEventListener('click', () => {
-    const video = button.previousElementSibling;
-    videos.forEach((item) => { if (item !== video) item.muted = true; });
-    document.querySelectorAll('.sound-toggle').forEach((item) => { if (item !== button) { item.textContent = 'Sound off'; item.setAttribute('aria-label', 'Unmute video'); } });
-    video.muted = !video.muted;
-    button.textContent = video.muted ? 'Sound off' : 'Sound on';
-    button.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
-  });
-});
 
 const reviewTimes = ['6.57.03','6.57.04','6.57.06','6.57.07','6.57.08','6.57.09','6.57.10','6.57.11','6.57.13','6.57.14','6.57.15','6.57.16','6.57.17','6.57.18','6.57.19','6.57.21','6.57.22','6.57.24','6.57.25','6.57.26','6.57.27','6.57.28','6.57.30','6.57.31','6.57.32','6.57.33','6.57.34','6.57.36','6.57.37','6.57.38','6.57.39','6.57.40','6.57.42','6.57.43','6.57.45','6.57.46'];
 const reviewTrack = document.querySelector('.review-track');
