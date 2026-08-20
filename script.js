@@ -1,7 +1,3 @@
-const reelTrack = document.querySelector('.reel-track');
-const originalReels = [...reelTrack.children];
-originalReels.forEach((reel) => reelTrack.append(reel.cloneNode(true)));
-
 const videos = [...document.querySelectorAll('.reel video')];
 const videoObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
