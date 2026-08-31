@@ -47,3 +47,14 @@
 .vpn-notice p{margin:0;font-size:11px;line-height:1.5}
 .vpn-notice strong{color:var(--text)}
 @media(max-width:620px){.community-intro{max-width:330px;font-size:13px}.community-option{padding:20px 16px}.vpn-notice{max-width:320px}}
+
+/* Floating WhatsApp channel shortcut */
+.whatsapp-chat-widget{position:fixed;z-index:60;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;color:#fff;filter:drop-shadow(0 12px 24px rgba(0,0,0,.38))}
+.whatsapp-chat-label{padding:10px 14px;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(12,18,23,.92);font-size:12px;font-weight:700;white-space:nowrap;opacity:0;transform:translateX(8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.whatsapp-chat-icon{width:60px;height:60px;border:2px solid rgba(255,255,255,.75);border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#2ee56f,#16a84e);box-shadow:0 0 0 6px rgba(37,211,102,.12);transition:transform .2s,box-shadow .2s}
+.whatsapp-chat-icon svg{width:34px;height:34px;fill:#fff}
+.whatsapp-chat-widget:hover .whatsapp-chat-label,.whatsapp-chat-widget:focus-visible .whatsapp-chat-label{opacity:1;transform:none}
+.whatsapp-chat-widget:hover .whatsapp-chat-icon,.whatsapp-chat-widget:focus-visible .whatsapp-chat-icon{transform:translateY(-3px) scale(1.04);box-shadow:0 0 0 8px rgba(37,211,102,.14),0 12px 30px rgba(37,211,102,.3)}
+.whatsapp-chat-widget:focus-visible{outline:2px solid #fff;outline-offset:6px;border-radius:999px}
+@media(max-width:620px){.whatsapp-chat-widget{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom))}.whatsapp-chat-label{display:none}.whatsapp-chat-icon{width:54px;height:54px}.whatsapp-chat-icon svg{width:31px;height:31px}}
+@media(prefers-reduced-motion:reduce){.whatsapp-chat-label,.whatsapp-chat-icon{transition:none}}
